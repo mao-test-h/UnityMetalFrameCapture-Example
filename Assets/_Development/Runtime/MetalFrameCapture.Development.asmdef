@@ -1,0 +1,14 @@
+{
+    "name": "MetalFrameCapture.Development",
+    "rootNamespace": "MetalFrameCapture.Development",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
