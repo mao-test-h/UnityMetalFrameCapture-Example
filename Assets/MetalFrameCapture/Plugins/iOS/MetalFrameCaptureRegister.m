@@ -85,7 +85,11 @@ void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UnityPluginUnload() {
 @implementation MyAppController
 
 - (void)shouldAttachRenderDelegate {
-    UnityRegisterPlugin(&UnityPluginLoad, &UnityPluginUnload);
+    // Unity 6000+
+    //UnityRegisterPlugin(&UnityPluginLoad, &UnityPluginUnload);
+    
+    // Unity 2022 LTS
+    UnityRegisterRenderingPluginV5(&UnityPluginLoad, &UnityPluginUnload);
 }
 @end
 
