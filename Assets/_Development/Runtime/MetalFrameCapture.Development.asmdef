@@ -1,7 +1,10 @@
 {
     "name": "MetalFrameCapture.Development",
     "rootNamespace": "MetalFrameCapture.Development",
-    "references": [],
+    "references": [
+        "GUID:a498ff3d299b845508f9279b51ecf3ad",
+        "GUID:e9885ff39d89046c58b9878b65eb4c8d"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
