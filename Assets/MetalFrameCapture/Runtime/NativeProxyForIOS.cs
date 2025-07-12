@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using AOT;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace MetalFrameCapture
 {
@@ -26,24 +27,25 @@ namespace MetalFrameCapture
             RegisterOnGpuCaptureComplete();
         }
 
-        public void StartGpuCapture(string filePath)
+        public void StartGpuCapture(string filePath, in CommandBuffer cmdBuf)
         {
             NativeMethod(filePath);
-            CallRenderEventFunc(EventType.StartGpuCapture);
+            CallRenderEventFunc(EventType.StartGpuCapture, cmdBuf);
             return;
 
             [DllImport("__Internal", EntryPoint = "metalFrameCapture_setFilePath")]
             static extern void NativeMethod(string filePath);
         }
 
-        public void StopGpuCapture()
+        public void StopGpuCapture(in CommandBuffer cmdBuf)
         {
-            CallRenderEventFunc(EventType.StopGpuCapture);
+            CallRenderEventFunc(EventType.StopGpuCapture, cmdBuf);
         }
 
-        private static void CallRenderEventFunc(EventType eventType)
+        private static void CallRenderEventFunc(EventType eventType, in CommandBuffer cmdBuf)
         {
-            GL.IssuePluginEvent(NativeMethod(), (int)eventType);
+            //GL.IssuePluginEvent(NativeMethod(), (int)eventType);
+            cmdBuf.IssuePluginEvent(NativeMethod(), (int)eventType);
             return;
 
             [DllImport("__Internal", EntryPoint = "metalFrameCapture_getRenderEventFunc")]
