@@ -26,6 +26,7 @@ namespace MetalFrameCapture.Development
 
         private void Start()
         {
+            _nativeShare = NativeShareFactory.Create();
             _nativeProxy = MetalFrameCaptureFactory.Create();
             _nativeProxy.Delegate = this;
 
