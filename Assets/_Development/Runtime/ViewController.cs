@@ -45,6 +45,11 @@ namespace MetalFrameCapture.Development
             });
         }
 
+        private void OnDestroy()
+        {
+            _renderFeature.SetCaptureEnabled(false);
+        }
+
         private static string GetFilePath()
         {
             var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
