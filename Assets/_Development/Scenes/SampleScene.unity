@@ -240,7 +240,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48a38a3bd9d834800b6e91850652cc36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Intensity: 0.5
+  intensity: 0.5
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -407,6 +407,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92381da9dbabe48758c5effe3bb8c948, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseCamera: {fileID: 330585545}
   startCaptureButton: {fileID: 1049442250}
   startCaptureStop: {fileID: 823937612}
 --- !u!4 &340221652
@@ -1268,7 +1269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48a38a3bd9d834800b6e91850652cc36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Intensity: 0.5
+  intensity: 0.5
 --- !u!1 &1543511779
 GameObject:
   m_ObjectHideFlags: 0
@@ -1533,7 +1534,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48a38a3bd9d834800b6e91850652cc36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Intensity: 0.5
+  intensity: 0.5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
