@@ -17,6 +17,7 @@ func onRenderEvent(eventID: Int32) {
 // P/Invoke
 
 public protocol MetalFrameCaptureDelegate {
+    func registerOnGpuCaptureFiled(_ delegate: @escaping (UnsafePointer<CChar>) -> Void)
     func registerOnGpuCaptureComplete(_ delegate: @escaping () -> Void)
 }
 
@@ -27,20 +28,17 @@ public final class MetalFrameCaptureAPI {
     }
 }
 
-@_cdecl("metalFrameCapture_startGpuCapture")
-public func startGpuCapture(filePath: UnsafePointer<CChar>) -> Int8 {
+@_cdecl("metalFrameCapture_setFilePath")
+public func metalFrameCapture_setFilePath(filePath: UnsafePointer<CChar>) {
     let filePathString = String(cString: filePath)
-    let ret = MetalFrameCapturePlugin.shared.startGpuCapture(filePath: filePathString)
-    return ret ? 1 : 0
+    MetalFrameCapturePlugin.shared.setFilePath(filePathString)
 }
 
-@_cdecl("metalFrameCapture_stopGpuCaptureDirect")
-public func stopGpuCaptureDirect() {
-    MetalFrameCapturePlugin.shared.stopGpuCaptureDirect()
-}
-
+public typealias OnGpuCaptureFiled = @convention(c) (UnsafePointer<CChar>) -> Void
 public typealias OnGpuCaptureComplete = @convention(c) () -> Void
-@_cdecl("metalFrameCapture_registerOnGpuCaptureComplete")
-func registerOnGpuCaptureComplete(_ delegate: @escaping OnGpuCaptureComplete) {
-    MetalFrameCaptureAPI.delegate!.registerOnGpuCaptureComplete(delegate)
+
+@_cdecl("metalFrameCapture_registerDelegate")
+func metalFrameCapture_registerDelegate(_ onFiled: @escaping OnGpuCaptureFiled, _ onComplete: @escaping OnGpuCaptureComplete) {
+    MetalFrameCaptureAPI.delegate!.registerOnGpuCaptureFiled(onFiled)
+    MetalFrameCaptureAPI.delegate!.registerOnGpuCaptureComplete(onComplete)
 }

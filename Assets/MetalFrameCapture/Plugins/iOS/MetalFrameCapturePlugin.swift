@@ -4,12 +4,16 @@ import Metal
 final class MetalFrameCapturePlugin {
     
     private enum EventType: Int32 {
-        case stopCapture = 0
+        case startCapture = 0
+        case stopCapture = 1
     }
     
     public static var shared: MetalFrameCapturePlugin! = nil
     
     private let unityMetal: IUnityGraphicsMetalV2
+    
+    private var filePath = ""
+    private var onGpuCaptureFailed: ((String) -> Void)? = nil
     private var onGpuCaptureComplete: (() -> Void)? = nil
     
     init(with unityMetal: IUnityGraphicsMetalV2) {
@@ -20,12 +24,19 @@ final class MetalFrameCapturePlugin {
     func onRenderEvent(eventType: Int32) {
         switch EventType(rawValue: eventType)! {
         case .stopCapture:
+            startGpuCapture()
+            break
+        case .startCapture:
             stopGpuCapture()
             break
         }
     }
     
-    func startGpuCapture(filePath: String) -> Bool {
+    func setFilePath(_ filePath: String) {
+        self.filePath = filePath
+    }
+    
+    func startGpuCapture() {
         guard let device: MTLDevice = unityMetal.MetalDevice() else {
             preconditionFailure("MTLDeviceが見つからない")
         }
@@ -40,22 +51,15 @@ final class MetalFrameCapturePlugin {
             try captureManager.startCapture(with: captureDescriptor)
         }
         catch {
-            print("Failed to GPU capture", error)
-            return false
+            onGpuCaptureFailed?(error.localizedDescription)
+            return
         }
         
         print("GPU capture started -> \(filePath)")
-        return true
-    }
-    
-    func stopGpuCaptureDirect() {
-        MTLCaptureManager.shared().stopCapture()
-        print("GPU capture stopped (internal)")
-        onGpuCaptureComplete?()
+        return
     }
     
     private func stopGpuCapture() {
-        //unityMetal.EndCurrentCommandEncoder()
         MTLCaptureManager.shared().stopCapture()
         print("GPU capture stopped")
         onGpuCaptureComplete?()
@@ -63,6 +67,14 @@ final class MetalFrameCapturePlugin {
 }
 
 extension MetalFrameCapturePlugin: MetalFrameCaptureDelegate {
+    
+    func registerOnGpuCaptureFiled(_ delegate: @escaping (UnsafePointer<CChar>) -> Void) {
+        onGpuCaptureFailed = { str in
+            let utfText = (str as NSString).utf8String!;
+            delegate(utfText)
+        }
+    }
+    
     func registerOnGpuCaptureComplete(_ delegate: @escaping () -> Void) {
         onGpuCaptureComplete = {
             delegate()
