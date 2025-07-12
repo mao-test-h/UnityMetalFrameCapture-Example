@@ -94,5 +94,3 @@ MonoBehaviour:
   m_Name: MetalFrameCaptureRenderFeature
   m_EditorClassIdentifier: 
   m_Active: 1
-  settings:
-    captureEnabled: 0
