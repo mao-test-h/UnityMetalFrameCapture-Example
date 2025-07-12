@@ -1,32 +1,54 @@
+using System;
+using System.IO;
+using NativeShare;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace MetalFrameCapture.Development
 {
-    public sealed class ViewController : MonoBehaviour
+    public sealed class ViewController : MonoBehaviour, INativeProxyDelegate
     {
         [SerializeField] private Button startCaptureButton;
         [SerializeField] private Button startCaptureStop;
 
+        private INativeProxy _nativeProxy;
+        private INativeShare _nativeShare;
+        private string _latestFilePath;
+
         void Start()
         {
+            _nativeProxy = MetalFrameCaptureFactory.Create();
+
             startCaptureButton.onClick.AddListener(() =>
             {
-                /*
-                var filePath = Application.persistentDataPath + "/capture.mp4";
-                var nativeProxy = MetalFrameCaptureFactory.Create();
-                nativeProxy.Delegate = new NativeProxyDelegate();
-                nativeProxy.StartGpuCapture(filePath);
-                 */
+                _latestFilePath = GetFilePath();
+                _nativeProxy.StartGpuCapture(_latestFilePath);
             });
 
             startCaptureStop.onClick.AddListener(() =>
             {
-                /*
-                 var nativeProxy = MetalFrameCaptureFactory.Create();
-                 nativeProxy.StopGpuCapture();
-                 */
+                _nativeProxy.StopGpuCapture();
             });
+        }
+
+        private static string GetFilePath()
+        {
+            var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            var fileName = $"GpuCapture_{timestamp}.gputrace";
+            var filePath = Path.Combine(Application.persistentDataPath, fileName);
+            return filePath;
+        }
+
+        public void OnGpuCaptureComplete()
+        {
+            var filePath = _latestFilePath;
+            Debug.Log($"GPU capture completed: {filePath}");
+            _nativeShare.ShareFile(filePath);
+        }
+
+        public void OnGpuCaptureFailed(string errorMessage)
+        {
+            Debug.LogError($"GPU capture failed: {errorMessage}");
         }
     }
 }
