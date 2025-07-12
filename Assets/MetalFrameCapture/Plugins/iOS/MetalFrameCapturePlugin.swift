@@ -23,10 +23,10 @@ final class MetalFrameCapturePlugin {
     
     func onRenderEvent(eventType: Int32) {
         switch EventType(rawValue: eventType)! {
-        case .stopCapture:
+        case .startCapture:
             startGpuCapture()
             break
-        case .startCapture:
+        case .stopCapture:
             stopGpuCapture()
             break
         }
