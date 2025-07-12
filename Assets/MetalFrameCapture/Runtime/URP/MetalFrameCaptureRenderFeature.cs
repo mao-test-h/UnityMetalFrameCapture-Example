@@ -1,18 +1,11 @@
-using System;
-using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Rendering.Universal;
 
 namespace MetalFrameCapture.URP
 {
     public sealed class MetalFrameCaptureRenderFeature : ScriptableRendererFeature
     {
-        [Serializable]
-        public sealed class Settings
-        {
-            public bool captureEnabled;
-        }
-
-        [SerializeField] private Settings settings = new Settings();
+        private bool _captureEnabled = false;
 
         private MetalFrameCaptureStartPass _startPass;
         private MetalFrameCaptureStopPass _stopPass;
@@ -30,12 +23,18 @@ namespace MetalFrameCapture.URP
 
         public void SetCaptureEnabled(bool enabled)
         {
-            settings.captureEnabled = enabled;
+            _captureEnabled = enabled;
+        }
+
+        public void SetFileName(string fileName)
+        {
+            Assert.IsNotNull(_startPass);
+            _startPass.SetFileName(fileName);
         }
 
         public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
         {
-            if (settings.captureEnabled == false && _startPass == null && _stopPass == null) return;
+            if (_captureEnabled == false || _startPass == null && _stopPass == null) return;
             renderer.EnqueuePass(_startPass);
             renderer.EnqueuePass(_stopPass);
         }

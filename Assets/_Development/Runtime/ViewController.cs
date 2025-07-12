@@ -36,6 +36,7 @@ namespace MetalFrameCapture.Development
             startCaptureButton.onClick.AddListener(() =>
             {
                 _latestFilePath = GetFilePath();
+                _renderFeature.SetFileName(_latestFilePath);
                 _renderFeature.SetCaptureEnabled(true);
             });
 
