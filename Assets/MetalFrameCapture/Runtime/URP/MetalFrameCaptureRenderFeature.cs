@@ -4,7 +4,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace MetalFrameCapture.URP
 {
-    public class MetalFrameCaptureRenderFeature : ScriptableRendererFeature
+    public sealed class MetalFrameCaptureRenderFeature : ScriptableRendererFeature
     {
         [Serializable]
         public sealed class Settings
@@ -22,15 +22,20 @@ namespace MetalFrameCapture.URP
             // do nothing
         }
 
-        public void Initialize(INativeProxy nativeProxy)
+        public void SetNativeProxy(INativeProxy nativeProxy)
         {
             _startPass = new MetalFrameCaptureStartPass(nativeProxy);
             _stopPass = new MetalFrameCaptureStopPass(nativeProxy);
         }
 
+        public void SetCaptureEnabled(bool enabled)
+        {
+            settings.captureEnabled = enabled;
+        }
+
         public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
         {
-            if (settings.captureEnabled == false && _startPass != null && _stopPass != null) return;
+            if (settings.captureEnabled == false && _startPass == null && _stopPass == null) return;
             renderer.EnqueuePass(_startPass);
             renderer.EnqueuePass(_stopPass);
         }
