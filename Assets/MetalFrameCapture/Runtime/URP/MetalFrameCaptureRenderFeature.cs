@@ -5,10 +5,8 @@ namespace MetalFrameCapture.URP
 {
     public sealed class MetalFrameCaptureRenderFeature : ScriptableRendererFeature
     {
-        private bool _captureEnabled = false;
-
-        private MetalFrameCaptureStartPass _startPass;
-        private MetalFrameCaptureStopPass _stopPass;
+        private MetalFrameCapturePass _pass;
+        private bool _captureEnabled;
 
         public override void Create()
         {
@@ -17,8 +15,7 @@ namespace MetalFrameCapture.URP
 
         public void SetNativeProxy(INativeProxy nativeProxy)
         {
-            _startPass = new MetalFrameCaptureStartPass(nativeProxy);
-            _stopPass = new MetalFrameCaptureStopPass(nativeProxy);
+            _pass = new MetalFrameCapturePass(nativeProxy);
         }
 
         public void SetCaptureEnabled(bool enabled)
@@ -28,15 +25,14 @@ namespace MetalFrameCapture.URP
 
         public void SetFileName(string fileName)
         {
-            Assert.IsNotNull(_startPass);
-            _startPass.SetFileName(fileName);
+            Assert.IsNotNull(_pass);
+            _pass.SetFileName(fileName);
         }
 
         public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
         {
-            if (_captureEnabled == false || _startPass == null && _stopPass == null) return;
-            renderer.EnqueuePass(_startPass);
-            renderer.EnqueuePass(_stopPass);
+            if (_captureEnabled == false || _pass == null) return;
+            renderer.EnqueuePass(_pass);
         }
     }
 }
