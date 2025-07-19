@@ -6,6 +6,7 @@ using System.Reflection;
 using MetalFrameCapture.URP;
 using NativeShare;
 using UnityEngine;
+using UnityEngine.Apple;
 using UnityEngine.Assertions;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
@@ -44,6 +45,10 @@ namespace MetalFrameCapture.Development
             {
                 //_nativeProxy.StopGpuCapture();
             });
+
+            var isDevTool = FrameCapture.IsDestinationSupported(FrameCaptureDestination.DevTools);
+            var isGpuTrace = FrameCapture.IsDestinationSupported(FrameCaptureDestination.GPUTraceDocument);
+            Debug.Log($"Is DevTools supported: {isDevTool}, Is GPU Trace Document supported: {isGpuTrace}");
         }
 
         private void OnDestroy()
