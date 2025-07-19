@@ -1,15 +1,17 @@
+using UnityEngine.Rendering;
+
 namespace MetalFrameCapture
 {
     public interface INativeProxy
     {
         INativeProxyDelegate Delegate { set; }
-        bool StartGpuCapture(string filePath);
-        void StopGpuCapture();
-        void StopGpuCaptureDirect();
+        void StartGpuCapture(string filePath, in CommandBuffer cmdBuf);
+        void StopGpuCapture(in CommandBuffer cmdBuf);
     }
 
     public interface INativeProxyDelegate
     {
+        void OnGpuCaptureFailed(string errorMessage);
         void OnGpuCaptureComplete();
     }
 }

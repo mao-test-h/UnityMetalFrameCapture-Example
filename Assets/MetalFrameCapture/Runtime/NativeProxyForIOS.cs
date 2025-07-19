@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using AOT;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace MetalFrameCapture
 {
@@ -9,10 +10,9 @@ namespace MetalFrameCapture
     {
         private enum EventType
         {
-            StopGpuCapture = 0,
+            StartGpuCapture = 0,
+            StopGpuCapture,
         }
-
-        private delegate void OnCompleteCallback();
 
         public INativeProxyDelegate Delegate
         {
@@ -27,50 +27,54 @@ namespace MetalFrameCapture
             RegisterOnGpuCaptureComplete();
         }
 
-        public bool StartGpuCapture(string filePath)
+        public void StartGpuCapture(string filePath, in CommandBuffer cmdBuf)
         {
-            return NativeMethod(filePath) == 1;
-
-            [DllImport("__Internal", EntryPoint = "metalFrameCapture_startGpuCapture")]
-            static extern byte NativeMethod(string filePath);
-        }
-
-        public void StopGpuCapture()
-        {
-            CallRenderEventFunc(EventType.StopGpuCapture);
-        }
-
-        public void StopGpuCaptureDirect()
-        {
-            NativeMethod();
+            NativeMethod(filePath);
+            CallRenderEventFunc(EventType.StartGpuCapture, cmdBuf);
             return;
 
-            [DllImport("__Internal", EntryPoint = "metalFrameCapture_stopGpuCaptureDirect")]
-            static extern byte NativeMethod();
+            [DllImport("__Internal", EntryPoint = "metalFrameCapture_setFilePath")]
+            static extern void NativeMethod(string filePath);
         }
 
-        private void RegisterOnGpuCaptureComplete()
+        public void StopGpuCapture(in CommandBuffer cmdBuf)
         {
-            NativeMethod(OnCallback);
-            return;
-
-            [DllImport("__Internal", EntryPoint = "metalFrameCapture_registerOnGpuCaptureComplete")]
-            static extern void NativeMethod(OnCompleteCallback callback);
-
-            [MonoPInvokeCallback(typeof(OnCompleteCallback))]
-            static void OnCallback()
-            {
-                _delegate?.OnGpuCaptureComplete();
-            }
+            CallRenderEventFunc(EventType.StopGpuCapture, cmdBuf);
         }
 
-        private static void CallRenderEventFunc(EventType eventType)
+        private static void CallRenderEventFunc(EventType eventType, in CommandBuffer cmdBuf)
         {
-            GL.IssuePluginEvent(NativeMethod(), (int)eventType);
+            //GL.IssuePluginEvent(NativeMethod(), (int)eventType);
+            cmdBuf.IssuePluginEvent(NativeMethod(), (int)eventType);
             return;
 
             [DllImport("__Internal", EntryPoint = "metalFrameCapture_getRenderEventFunc")]
             static extern IntPtr NativeMethod();
+        }
+
+        private delegate void OnFiledCallback(string errorMessage);
+
+        private delegate void OnCompleteCallback();
+
+        private static void RegisterOnGpuCaptureComplete()
+        {
+            NativeMethod(OnFiled, OnComplete);
+            return;
+
+            [DllImport("__Internal", EntryPoint = "metalFrameCapture_registerDelegate")]
+            static extern void NativeMethod(OnFiledCallback onFiledCallback, OnCompleteCallback onCompleteCallback);
+
+            [MonoPInvokeCallback(typeof(OnFiledCallback))]
+            static void OnFiled(string errorMessage)
+            {
+                _delegate?.OnGpuCaptureFailed(errorMessage);
+            }
+
+            [MonoPInvokeCallback(typeof(OnCompleteCallback))]
+            static void OnComplete()
+            {
+                _delegate?.OnGpuCaptureComplete();
+            }
         }
     }
 }

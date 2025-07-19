@@ -1,12 +1,10 @@
 {
-    "name": "MetalFrameCapture.Development",
-    "rootNamespace": "MetalFrameCapture.Development",
+    "name": "MetalFrameCapture.URP",
+    "rootNamespace": "",
     "references": [
         "GUID:a498ff3d299b845508f9279b51ecf3ad",
-        "GUID:ed39f1371d66c4749b3f953eb1c7556e",
-        "GUID:e9885ff39d89046c58b9878b65eb4c8d",
-        "GUID:15fc0a57446b3144c949da3e2b9737a9",
-        "GUID:df380645f10b7bc4b97d4f5eb6303d95"
+        "GUID:df380645f10b7bc4b97d4f5eb6303d95",
+        "GUID:15fc0a57446b3144c949da3e2b9737a9"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
