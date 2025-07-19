@@ -29,7 +29,7 @@ namespace Example
             // GPUTraceDocument → アプリ上からのキャプチャに対応しているか
             var isGpuTrace = FrameCapture.IsDestinationSupported(FrameCaptureDestination.GPUTraceDocument);
             var isDevTool = FrameCapture.IsDestinationSupported(FrameCaptureDestination.DevTools);
-            isSupportedText.text = $"DevTools: {isDevTool}, GPUTrace: {isGpuTrace}";
+            isSupportedText.text = $"[Supported]: DevTools: {isDevTool}, GPUTrace: {isGpuTrace}";
             Debug.Log(isSupportedText.text);
 
             SetEventBeginCapture();

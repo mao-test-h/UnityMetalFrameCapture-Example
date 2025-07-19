@@ -1257,7 +1257,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: FrameCapture API
+  m_Text: '[Supported]: DevTools: -, GPUTrace: -'
 --- !u!222 &596481126
 CanvasRenderer:
   m_ObjectHideFlags: 0
