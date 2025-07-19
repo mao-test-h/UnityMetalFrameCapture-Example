@@ -1,14 +1,10 @@
 # CLAUDE.md
 
-## プロジェクト概要
-
-Unity Metal Frame Capture は、iOS デバイス上で Metal フレームキャプチャ機能を提供する Unity パッケージです。Metal API のレンダリングパイプラインをキャプチャし、デバッグとパフォーマンス解析を支援します。
-
 ## 開発環境
 
 - **Unity バージョン**: 6000.0+ (URP - Universal Render Pipeline)
 - **対象プラットフォーム**: iOS
-- **開発言語**: C#, Swift, Objective-C
+- **開発言語**: C#, Swift
 
 ## ワークフロー
 
