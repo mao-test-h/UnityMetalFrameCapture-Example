@@ -66,5 +66,5 @@
     "explorer.fileNesting.patterns": {
         "*.sln": "*.csproj",
     },
-    "dotnet.defaultSolution": "UnityMetalFrameCapture.sln"
+    "dotnet.defaultSolution": "UnityMetalFrameCapture-Example.sln"
 }
