@@ -6,6 +6,7 @@ using System.Reflection;
 using MetalFrameCapture.URP;
 using NativeShare;
 using UnityEngine;
+using UnityEngine.Apple;
 using UnityEngine.Assertions;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
@@ -14,9 +15,18 @@ namespace MetalFrameCapture.Development
 {
     public sealed class ViewController : MonoBehaviour, INativeProxyDelegate
     {
+        // Low-level Native Plugin Interface
         [SerializeField] private Camera baseCamera;
         [SerializeField] private Button startCaptureButton;
-        [SerializeField] private Button startCaptureStop;
+        [SerializeField] private Button shareButton;
+
+        // FrameCapture API
+        [SerializeField] private Text isSupportedText;
+        [SerializeField] private Button beginCaptureToFile;
+        [SerializeField] private Button beginCaptureToXcode;
+        [SerializeField] private Button endCapture;
+        [SerializeField] private Button captureNextFrameToFile;
+        [SerializeField] private Button captureNextFrameToXcode;
 
         private MetalFrameCaptureRenderFeature _renderFeature;
 
@@ -40,9 +50,44 @@ namespace MetalFrameCapture.Development
                 _renderFeature.SetCaptureEnabled(true);
             });
 
-            startCaptureStop.onClick.AddListener(() =>
+            shareButton.onClick.AddListener(ShareLatestFile);
+
+            var isDevTool = FrameCapture.IsDestinationSupported(FrameCaptureDestination.DevTools);
+            var isGpuTrace = FrameCapture.IsDestinationSupported(FrameCaptureDestination.GPUTraceDocument);
+            isSupportedText.text = $"DevTools: {isDevTool}, GPUTrace: {isGpuTrace}";
+            Debug.Log(isSupportedText.text);
+
+            beginCaptureToFile.onClick.AddListener(() =>
             {
-                //_nativeProxy.StopGpuCapture();
+                _latestFilePath = GetFilePath();
+                FrameCapture.BeginCaptureToFile(_latestFilePath);
+                Debug.Log($"Begin capture to file: {_latestFilePath}");
+            });
+
+            beginCaptureToXcode.onClick.AddListener(() =>
+            {
+                FrameCapture.BeginCaptureToXcode();
+                Debug.Log("Begin capture to Xcode");
+            });
+
+            endCapture.onClick.AddListener(() =>
+            {
+                FrameCapture.EndCapture();
+                Debug.Log("End capture");
+                ShareLatestFile();
+            });
+
+            captureNextFrameToFile.onClick.AddListener(() =>
+            {
+                _latestFilePath = GetFilePath();
+                FrameCapture.CaptureNextFrameToFile(_latestFilePath);
+                Debug.Log($"Capture next frame to file: {_latestFilePath}");
+            });
+
+            captureNextFrameToXcode.onClick.AddListener(() =>
+            {
+                FrameCapture.CaptureNextFrameToXcode();
+                Debug.Log("Capture next frame to Xcode");
             });
         }
 
@@ -67,9 +112,8 @@ namespace MetalFrameCapture.Development
 
         public void OnGpuCaptureComplete()
         {
-            var filePath = _latestFilePath;
-            Debug.Log($"GPU capture completed: {filePath}");
-            _nativeShare.ShareFile(filePath);
+            Debug.Log($"GPU capture completed: {_latestFilePath}");
+            ShareLatestFile();
             _renderFeature.SetCaptureEnabled(false);
         }
 
@@ -106,5 +150,18 @@ namespace MetalFrameCapture.Development
 
             return rendererFeatures;
         }
+        
+        private void ShareLatestFile()
+        {
+            if (!string.IsNullOrEmpty(_latestFilePath))
+            {
+                _nativeShare.ShareFile(_latestFilePath);
+            }
+            else
+            {
+                Debug.LogWarning("No file to share. Please start a capture first.");
+            }
+        }
+
     }
 }
