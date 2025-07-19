@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MetalFrameCapture.Development
+namespace Example
 {
     public sealed class Rotation : MonoBehaviour
     {
